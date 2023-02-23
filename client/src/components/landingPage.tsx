@@ -14,24 +14,24 @@ interface CatProfile {
 
 const LandingPage = (props: any) => {
     console.log(props)
-    const [foo, setFoo] = useState<CatProfile[]>([{}]);
+    const [cats, setCats] = useState<CatProfile[]>([{}]);
    useEffect(() => {
         const fetchData = async () => {
             try{
                 const res = await fetch(`${props.props.url}/all`)
                 const data = await res.json()
-                setFoo(data)
+                setCats(data)
             } catch(err) {
                 console.error(err);
             }
         }
         fetchData() 
    }, [])
-   console.log(foo)
+   console.log(cats)
     return (
         <>
             <h1>Landing page! </h1>
-            {foo.map(f => {
+            {cats.map(f => {
                 console.log(f)
                 return(
                     <>
