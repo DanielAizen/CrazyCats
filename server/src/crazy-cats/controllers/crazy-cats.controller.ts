@@ -21,7 +21,12 @@ export class CrazyCatsController {
   }
 
   @Get('name/:name')
-  findCatName(name: string) {
+  findCatName(@Param('name') name: string) {
     return this.crazyCatsService.findCatByName(name);
+  }
+
+  @Get('landing')
+  findTopFiveCats(): Observable<Profile[]>{
+    return this.crazyCatsService.topCats();
   }
 }
