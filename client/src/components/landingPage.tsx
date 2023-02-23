@@ -1,19 +1,10 @@
-import {
-  Avatar,
-  Card,
-  CardBody,
-  CardHeader,
-  Container,
-  Heading,
-  Stack,
-  Text,
-  Box,
-  Button,
-} from "@chakra-ui/react";
+import { Container, Heading, Stack, Box } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
+import { ProfileCard } from "src/layouts/profile-card";
 import { SearchBar } from "src/layouts/search-bar";
 
-interface CatProfile {
+export interface CatProfile {
   id?: number;
   name?: string;
   dob?: Date;
@@ -31,6 +22,8 @@ const LandingPage = (props: any) => {
   const [cat, setCat] = useState<CatProfile>();
   const [topCats, setTopCats] = useState<CatProfile[]>([{}]);
   const [searchName, setSearchName] = useState("");
+  let searchClicked = false;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -45,20 +38,33 @@ const LandingPage = (props: any) => {
   }, []);
 
   const handleSearchCat = async () => {
-    console.log({ searchName });
     try {
       const res = await fetch(`${baseUrl}/name/${searchName}`);
       const data = await res.json();
-      console.log({ data });
       setCat(data);
+    //   searchClicked = true;
+
     } catch (err) {
       console.error(err);
     }
   };
 
-  const handleLikes = () => {
+//   useEffect(() => {
+//     navigate(`/cat_profile`, { state: cat });
+//   }, [searchClicked]);
 
-  }
+  const handleAddLike = (tc: CatProfile) => {
+    console.log("clicked like", tc.id);
+  };
+
+  const handleRemoveLike = (tc: CatProfile) => {
+    console.log("clicked -1", tc.id);
+  };
+
+  const handleCardClick = (tc: CatProfile) => {
+    console.log("clicked avatar", tc.id);
+  };
+
   return (
     <>
       <Container maxW="100%">
@@ -69,7 +75,7 @@ const LandingPage = (props: any) => {
             defaultValue={searchName}
           />
           <Heading m="20px 0 0 50px" p="10px" alignSelf="center">
-          🐱‍💻Crazy Cats!🐱‍💻
+            🐱‍💻Crazy Cats!🐱‍💻
           </Heading>
         </Box>
         <div
@@ -84,31 +90,13 @@ const LandingPage = (props: any) => {
           <Stack spacing={topCats.length} direction="row">
             {topCats.map((tc) => {
               return (
-                <Card
-                  direction={{ base: "row" }}
-                  overflow="hidden"
-                  variant="outline"
-                  align="center"
-                  height='250px'
-                  backgroundColor={'red'}
-                >
-                  <CardHeader alignSelf="center">
-                    <Avatar
-                      size="xl"
-                      src="https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187.jpg?w=374&h=250"
-                    />
-                  </CardHeader>
-                  <Stack>
-                    <CardBody>
-                      <Heading size="lg">{tc.name}</Heading>
-                      <Text fontSize='lg'> Crazy Cats Fans: {tc.likes}</Text>
-                    </CardBody>
-                    <Stack spacing={2} direction="row" justifyContent='center'>
-                      <Button onClick={handleLikes} name='add'>😻</Button>
-                      <Button onClick={handleLikes} name='remove'>🙀</Button>
-                    </Stack>
-                  </Stack>
-                </Card>
+                <ProfileCard
+                  currCat={tc}
+                  handleCardClick={handleCardClick}
+                  handleAddLike={handleAddLike}
+                  handleRemoveLike={handleRemoveLike}
+                  disableBtn={false}
+                />
               );
             })}
           </Stack>
