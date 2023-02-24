@@ -18,10 +18,12 @@ export const ProfileCard = (props) => {
       overflow="hidden"
       variant="outline"
       align="center"
-      height="250px"
+      height={!props.profile ? "250px" : "100%"}
       backgroundColor={"red"}
       key={currentCat.id}
-      onClick={() => props.handleCardClick(currentCat)}
+      onClick={
+        !props.disableClick ? () => props.handleCardClick(currentCat) : () => ""
+      }
     >
       <CardHeader alignSelf="center">
         <Avatar
@@ -37,9 +39,27 @@ export const ProfileCard = (props) => {
         <CardBody>
           <Heading size="lg">{currentCat.name}</Heading>
           <Text fontSize="md"> Crazy Cats Fans: {currentCat.likes}</Text>
+          {props.profile ? (
+            <>
+              <Text fontSize="md" as="b">
+                About Me:
+              </Text>
+              <Stack spacing={3} direction="row">
+                <br />
+                <Text>Birth date: {currentCat.dob}</Text>
+                <Text>Where I'm from: {currentCat.location}</Text>
+                <Text>Favorite food: {currentCat.fav_food}</Text>
+                <Text>My fur color: {currentCat.fur_color}</Text>
+                <Text>My height: {currentCat.height}</Text>
+                <Text>My weight: {currentCat.weight}</Text>
+              </Stack>
+            </>
+          ) : (
+            ""
+          )}
         </CardBody>
         <Stack spacing={2} direction="row" justifyContent="center">
-          {!props.disableBtn ? (
+          {!props.disableClick ? (
             <>
               <Button onClick={() => props.handleAddLike(currentCat)}>
                 😻
