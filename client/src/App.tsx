@@ -1,21 +1,32 @@
 import React from "react";
-import { ChakraProvider } from '@chakra-ui/react';
-import { Route, Routes } from 'react-router-dom';
+import {
+  Route,
+  createBrowserRouter,
+  createRoutesFromElements,
+  RouterProvider,
+} from "react-router-dom";
+import { CatProfilePage } from "./components/catProfilePage";
 import LandingPage from "./components/landingPage";
 
-const BASE_URL = 'http://localhost:3000/crazy-cats'
+const BASE_URL = "http://localhost:3000/crazy-cats";
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<LandingPage props={{ url: BASE_URL }} />}>
+      <Route
+        path="cat_profile"
+        element={<CatProfilePage props={{ url: BASE_URL }} />}
+      />
+    </Route>
+  )
+);
 
 const App = () => {
-    return (
-        <>
-            <ChakraProvider>
-                <Routes>
-                    <Route path='/' element={<LandingPage props={{url: BASE_URL}} />} />
-                </Routes>
-            </ChakraProvider>
-        </>
-    )
-
-}
+  return (
+    <>
+      <RouterProvider router={router} />
+    </>
+  );
+};
 
 export default App;
