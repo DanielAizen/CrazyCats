@@ -1,6 +1,6 @@
-import { Container, Heading, Stack, Box } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Container, Stack, Box } from "@chakra-ui/react";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ProfileCard } from "src/layouts/profile-card";
 import { SearchBar } from "src/layouts/search-bar";
 
@@ -18,11 +18,11 @@ export interface CatProfile {
 }
 
 const LandingPage = (props: any) => {
+  const navigate = useNavigate();
   const baseUrl = props.props.url;
   const [cat, setCat] = useState<CatProfile>();
-  const [topCats, setTopCats] = useState<CatProfile[]>([{}]);
-  const [searchName, setSearchName] = useState("");
-  let searchClicked = false;
+  const [topCats, setTopCats] = useState<CatProfile[]>([]);
+  const [update, setUpdate] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,48 +35,36 @@ const LandingPage = (props: any) => {
       }
     };
     fetchData();
-  }, []);
+    setUpdate(false);
+  }, [update]);
 
-  const handleSearchCat = async () => {
+  if (cat) {
+    navigate("/cat_profile", { state: cat });
+  }
+
+  const handleAddLike = async (tc: CatProfile, likes: number) => {
+    console.log("im here", tc.id, likes,JSON.stringify({ likes: likes }));
     try {
-      const res = await fetch(`${baseUrl}/name/${searchName}`);
-      const data = await res.json();
-      setCat(data);
-    //   searchClicked = true;
-
-    } catch (err) {
-      console.error(err);
+      await fetch(`${baseUrl}/likes/${tc.id}`, {
+        method: "PUT",
+        headers: {'Content-type': 'application/json'},
+        body: JSON.stringify({ likes: likes }),
+      });
+      setUpdate(true);
+    } catch (error) {
+      console.error(error);
     }
   };
 
-//   useEffect(() => {
-//     navigate(`/cat_profile`, { state: cat });
-//   }, [searchClicked]);
-
-  const handleAddLike = (tc: CatProfile) => {
-    console.log("clicked like", tc.id);
-  };
-
-  const handleRemoveLike = (tc: CatProfile) => {
-    console.log("clicked -1", tc.id);
-  };
-
-  const handleCardClick = (tc: CatProfile) => {
-    console.log("clicked avatar", tc.id);
+  const handleViewProfile = (tc: CatProfile) => {
+    setCat(tc);
   };
 
   return (
     <>
       <Container maxW="100%">
         <Box display="flex" flexDirection="column" alignItems="center">
-          <SearchBar
-            setSearchName={setSearchName}
-            handleSearchCat={handleSearchCat}
-            defaultValue={searchName}
-          />
-          <Heading m="20px 0 0 50px" p="10px" alignSelf="center">
-            🐱‍💻Crazy Cats!🐱‍💻
-          </Heading>
+          <SearchBar navigate={navigate} />
         </Box>
         <div
           className="card-container"
@@ -92,10 +80,10 @@ const LandingPage = (props: any) => {
               return (
                 <ProfileCard
                   currCat={tc}
-                  handleCardClick={handleCardClick}
+                  handleViewProfile={handleViewProfile}
                   handleAddLike={handleAddLike}
-                  handleRemoveLike={handleRemoveLike}
-                  disableBtn={false}
+                  disableClick={false}
+                  profile={false}
                 />
               );
             })}
