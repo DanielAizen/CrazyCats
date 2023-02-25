@@ -4,9 +4,11 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   RouterProvider,
+  
 } from "react-router-dom";
 import { CatProfilePage } from "./components/catProfilePage";
 import LandingPage from "./components/landingPage";
+import { SearchResultsPage } from "./components/searchResultsPage";
 import { RootLayout } from "./layouts/rootLayout";
 
 const BASE_URL = "http://localhost:3000/crazy-cats";
@@ -19,6 +21,10 @@ const router = createBrowserRouter(
         path="cat_profile"
         element={<CatProfilePage props={{ url: BASE_URL }} />}
       />
+      <Route
+        path="results"
+        element={<SearchResultsPage props={{ url: BASE_URL }} />}
+      />
     </Route>
   )
 );
@@ -26,7 +32,7 @@ const router = createBrowserRouter(
 const App = () => {
   return (
     <>
-      <RouterProvider router={router} />
+        <RouterProvider router={router} />
     </>
   );
 };

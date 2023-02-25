@@ -1,7 +1,6 @@
 import { Button } from "@chakra-ui/button";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { Box, Container } from "@chakra-ui/layout";
-import { replace } from "lodash";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ProfileCard } from "src/layouts/profile-card";
@@ -9,7 +8,6 @@ import { ProfileCard } from "src/layouts/profile-card";
 export const CatProfilePage = (props: any) => {
   const { state } = useLocation();
   const navigate = useNavigate()
-  const baseUrl = props.props.url;
   return (
     <>
       <Container maxW="800px" mt='25px'>

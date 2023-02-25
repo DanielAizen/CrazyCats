@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Not, Repository } from 'typeorm';
+import { IsNull, Like, Not, Repository, UpdateResult } from 'typeorm';
 import { CrazyCatsEntity } from '../modules/crazy-cats.entity';
 import { from, Observable } from 'rxjs';
 import { Profile } from '../modules/profile.interface';
@@ -21,8 +21,10 @@ export class CrazyCatsService {
   findCatById(id: number): Observable<Profile> {
     return from(this.crazyCatsRepository.findOneBy({ id: id }));
   }
-  findCatByName(catName: string): Observable<Profile> {
-    return from(this.crazyCatsRepository.findOne({ where: { name: catName } }));
+  findCatsByName(catName: string): Observable<Profile[]> {
+    return from(
+      this.crazyCatsRepository.find({ where: { name: Like(`%${catName}%`) } }),
+    );
   }
   topCats(): Observable<Profile[]> {
     return from(
@@ -34,5 +36,8 @@ export class CrazyCatsService {
         },
       }),
     );
+  }
+  updateLikes(id: number, likes: number): Observable<UpdateResult> {
+    return from(this.crazyCatsRepository.update(id, { likes: likes }));
   }
 }

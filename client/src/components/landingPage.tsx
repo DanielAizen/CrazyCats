@@ -1,5 +1,5 @@
 import { Container, Stack, Box } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ProfileCard } from "src/layouts/profile-card";
 import { SearchBar } from "src/layouts/search-bar";
@@ -21,8 +21,8 @@ const LandingPage = (props: any) => {
   const navigate = useNavigate();
   const baseUrl = props.props.url;
   const [cat, setCat] = useState<CatProfile>();
-  const [topCats, setTopCats] = useState<CatProfile[]>([{}]);
-  const [searchName, setSearchName] = useState("");
+  const [topCats, setTopCats] = useState<CatProfile[]>([]);
+  const [update, setUpdate] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,32 +35,28 @@ const LandingPage = (props: any) => {
       }
     };
     fetchData();
-  }, []);
-
-  //todo fix the endpoint to return every thing that matches
-  const handleSearchCat = async () => {
-    try {
-      const res = await fetch(`${baseUrl}/name/${searchName}`);
-      const data = await res.json();
-    } catch (err) {
-      console.error(err);
-    }
-  };
+    setUpdate(false);
+  }, [update]);
 
   if (cat) {
     navigate("/cat_profile", { state: cat });
   }
 
-  const handleAddLike = (tc: CatProfile) => {
-    console.log("clicked like", tc.id);
+  const handleAddLike = async (tc: CatProfile, likes: number) => {
+    console.log("im here", tc.id, likes,JSON.stringify({ likes: likes }));
+    try {
+      await fetch(`${baseUrl}/likes/${tc.id}`, {
+        method: "PUT",
+        headers: {'Content-type': 'application/json'},
+        body: JSON.stringify({ likes: likes }),
+      });
+      setUpdate(true);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const handleRemoveLike = (tc: CatProfile) => {
-    console.log("clicked -1", tc.id);
-  };
-
-  const handleCardClick = (tc: CatProfile) => {
-    console.log("clicked avatar", tc.id);
+  const handleViewProfile = (tc: CatProfile) => {
     setCat(tc);
   };
 
@@ -68,11 +64,7 @@ const LandingPage = (props: any) => {
     <>
       <Container maxW="100%">
         <Box display="flex" flexDirection="column" alignItems="center">
-          <SearchBar
-            setSearchName={setSearchName}
-            handleSearchCat={handleSearchCat}
-            defaultValue={searchName}
-          />
+          <SearchBar navigate={navigate} />
         </Box>
         <div
           className="card-container"
@@ -88,9 +80,8 @@ const LandingPage = (props: any) => {
               return (
                 <ProfileCard
                   currCat={tc}
-                  handleCardClick={handleCardClick}
+                  handleViewProfile={handleViewProfile}
                   handleAddLike={handleAddLike}
-                  handleRemoveLike={handleRemoveLike}
                   disableClick={false}
                   profile={false}
                 />
