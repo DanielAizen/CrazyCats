@@ -9,10 +9,11 @@ import {
   Text,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { CatProfile } from "src/components/landingPage";
 
 export const ProfileCard = (props) => {
-  const currentCat = props.currCat;
-  const [likes, setLikes] = useState(currentCat.likes);
+  const currentCat: CatProfile = props.currCat;
+  const [likes, setLikes] = useState(currentCat.likes!);
   return (
     <Card
       direction={{ base: "row" }}
@@ -44,12 +45,12 @@ export const ProfileCard = (props) => {
               </Text>
               <Stack spacing={3} direction="row">
                 <br />
-                <Text>Birth date: {currentCat.dob}</Text>
+                <Text>Birth date: {(new Date(currentCat.dob!)).toLocaleDateString()}</Text>
                 <Text>Where I'm from: {currentCat.location}</Text>
                 <Text>Favorite food: {currentCat.fav_food}</Text>
                 <Text>My fur color: {currentCat.fur_color}</Text>
-                <Text>My height: {currentCat.height}</Text>
-                <Text>My weight: {currentCat.weight}</Text>
+                <Text>My height: {currentCat.height!.toFixed()}</Text>
+                <Text>My weight: {currentCat.weight!.toFixed()}</Text>
               </Stack>
             </>
           ) : (
@@ -61,8 +62,7 @@ export const ProfileCard = (props) => {
             <>
               <Button
                 onClick={() => {
-                  
-                  setLikes(++currentCat.likes);
+                  setLikes(++currentCat.likes!);
                   props.handleAddLike(currentCat, likes + 1);
                 }}
               >

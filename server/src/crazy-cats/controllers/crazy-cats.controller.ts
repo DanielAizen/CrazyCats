@@ -45,7 +45,6 @@ export class CrazyCatsController {
     @Param('id') id: number,
     @Req() req: Request,
   ): Observable<UpdateResult> {
-    console.log(req.body,req.body['likes'])
     return this.crazyCatsService.updateLikes(id, req.body['likes']);
   }
 }
